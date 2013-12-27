@@ -5,20 +5,21 @@ SCCP Format
 
 TS 48.006 @ 9.4.3
 
-    discrimination:
+    discrimination =
       dtap: 1
       bssmap: 0
 
 The user data field is found in the UDT message.
 
-    parse_user_data_field: (buf) ->
-      switch buf.readUInt8 0
-        when 0: # bssmap
+    parse_user_data_field = (buf) ->
+      discriminator = buf.readUInt8 0
+      switch discriminator
+        when 0 # bssmap
           len = buf.readUInt8 1
           msg = buf.splice 2, 2+len
           parse_bssmap msg
 
-        when 1:
+        when 1 # dtap
           dlci = buf.readUInt8 1
           len = buf.readUInt8 2
           msg = buf.splice 3, 3+len
@@ -92,7 +93,7 @@ We only include parameters relevant to TS 48.006.
 
     destination_local_reference =
       code: 1
-      encode = (p) ->
+      encode: (p) ->
         three_byte_buffer p.destination_local_reference
 
     source_local_reference =
@@ -118,18 +119,18 @@ We only include parameters relevant to TS 48.006.
         new Buffer [p.protocol_class]
 
     segmenting_reassembling =
-      code:
+      code: 6
       encode: (p) ->
         new Buffer [ if p.segmenting_reassembling then 1 else 0 ]
 
     # Actually unused ( TS 48.006 @ 8.4.1 )
     credit =
-      code:
+      code: 9
       encode: (p) ->
         new Buffer [ p.credit ]
 
     from_table = (code,field,table) ->
-      code:
+      code: code
       encode: (p) ->
         cause = p[field]
         if typeof cause is 'string'
@@ -174,24 +175,24 @@ We only include parameters relevant to TS 48.006.
       sccp_failure: 17
       unequipped_user: 19
 
-    release_cause = from_table --, 'release_cause', release_cause_code
+    release_cause = from_table 10, 'release_cause', release_cause_code
 
-    refusal_cause = from_table --, 'refusal_cause', refusal_cause_code
+    refusal_cause = from_table 14, 'refusal_cause', refusal_cause_code
 
     data =
-      code: 
+      code: 15
       encode: (p) ->
         p.data # should already be a buffer
 
     # segmentation =  Unused?
 
     hop_counter = # Q.713 @ 3.18
-      code:
+      code: 17
       encode: (p) ->
         one_byte_buffer p.hop_counter
 
     importance = # Q.713 @ 3.19
-      code:
+      code: 18
       encode: (p) ->
         one_byte_buffer p.importance & 0x07
 
@@ -273,7 +274,7 @@ Q.713 table 1, minus messages not needed in 48.006
         ]
 
       DT1: # Q.713 @ 4.7
-        message_type_code: 
+        message_type_code: 6
         mandatory_fixed: [
           message_type_code
           destination_local_reference
@@ -296,4 +297,4 @@ Q.713 table 1, minus messages not needed in 48.006
           data
         ]
 
-    module.exports = (require './itu-format') sccp_messages_by_name
+    module.exports = (require './itu-format') sccp_message_by_name
