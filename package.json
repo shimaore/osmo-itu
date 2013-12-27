@@ -1,5 +1,5 @@
 {
-  "name": "itu",
+  "name": "osmo-itu",
   "version": "0.1.0",
   "description": "An ITU package for the BSC-MSC interface",
   "main": "index.js",

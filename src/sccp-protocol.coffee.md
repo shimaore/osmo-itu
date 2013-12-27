@@ -1,7 +1,8 @@
 Parse SCCP
 ----------
 
-    {build,parse} = request './sccp-format'
+    {build,parse} = require './sccp-format'
+    {EventEmitter} = require 'events'
 
     module.exports = class sccpProtocol extends EventEmitter
 
