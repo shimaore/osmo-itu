@@ -1,0 +1,19 @@
+{
+  "name": "itu",
+  "version": "0.1.0",
+  "description": "An ITU package for the BSC-MSC interface",
+  "main": "index.js",
+  "scripts": {
+    "prepublish": "coffee -m -c index.coffee.md src/*.coffee.md",
+    "test": "mocha --compilers coffee.md:coffee-script --reporter spec"
+  },
+  "author": "Stéphane Alnet <stephane@shimaore.net> (http://shimaore.net/)",
+  "license": "unlicense",
+  "devDependencies": {
+    "coffee-script": "~1.6.3",
+    "should": "~2.1.1",
+    "mocha": "~1.16.2"
+  },
+  "dependencies": {
+  }
+}
